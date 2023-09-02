@@ -2,11 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import {auth} from '../../firebaseConfig';
 import ApiService from '../services/API_Service';
-
-export interface ImageModel {
-  imageUrl: string;
-  imageId: string;
-}
+import {ImageModel} from '../components/ImageGrid';
+import {styles} from '../styles/styles';
 
 const ImagesCollection: React.FC<{route: any}> = ({route}) => {
   const [images, setImages] = useState<ImageModel[]>([]);
@@ -39,11 +36,11 @@ const ImagesCollection: React.FC<{route: any}> = ({route}) => {
   }, [userId, collectionId]);
 
   const renderItem = ({item}: {item: ImageModel}) => (
-    <Image source={{uri: item.imageUrl}} style={styles.image} />
+    <Image source={{uri: item.imageUrl}} style={styles.imageBig} />
   );
 
   return (
-    <View style={styles.container}>
+    <View style={styles.containerCenter}>
       <Text style={styles.title}>{collectionTitle}</Text>
       {loading ? (
         <Text>Loading...</Text>
@@ -57,24 +54,5 @@ const ImagesCollection: React.FC<{route: any}> = ({route}) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  image: {
-    width: 300,
-    height: 300,
-    margin: 5,
-  },
-});
 
 export default ImagesCollection;

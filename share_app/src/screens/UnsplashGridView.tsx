@@ -13,6 +13,7 @@ import Toast from 'react-native-toast-message';
 import {auth} from '../../firebaseConfig';
 import {UserProvider, useUser} from '../providers/UserContext';
 import ApiService from '../services/API_Service';
+import {styles} from '../styles/styles';
 
 export interface Photo {
   id: string;
@@ -130,66 +131,5 @@ const UnsplashGridView: React.FC = () => {
     </UserProvider>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  image: {
-    width: '33.33%',
-    height: 120,
-    aspectRatio: 1,
-    borderRadius: 12,
-    borderColor: 'transparent',
-    borderWidth: 1,
-  },
-  imageWrapper: {
-    width: '33.33%',
-    padding: 5,
-  },
-  imageSelected: {
-    borderWidth: 1,
-    borderColor: 'blue',
-    borderRadius: 12,
-  },
-  iosButtonDisabled: {
-    borderColor: '#C3C3C3',
-  },
-  iosButtonTextDisabled: {
-    color: '#C3C3C3',
-  },
-  primaryButton: {
-    marginHorizontal: 30,
-    marginVertical: 10,
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  primaryButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  secondaryButton: {
-    marginHorizontal: 30,
-    marginVertical: 10,
-    backgroundColor: 'transparent',
-    borderColor: '#007AFF',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  secondaryButtonText: {
-    color: '#007AFF',
-    fontSize: 16,
-  },
-});
 
 export default UnsplashGridView;

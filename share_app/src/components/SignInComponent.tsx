@@ -1,6 +1,7 @@
 import React, {useRef} from 'react';
-import {View, StyleSheet, Animated} from 'react-native';
+import {View, Animated} from 'react-native';
 import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
+import {styles} from '../styles/styles';
 
 const SignInComponent = ({signIn}: {signIn: () => void}) => {
   const fadeAnim = useRef(new Animated.Value(0.5)).current; // Initial value for opacity: 0.5
@@ -33,20 +34,5 @@ const SignInComponent = ({signIn}: {signIn: () => void}) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  welcomeMessage: {
-    marginBottom: 20,
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'blue',
-    textAlign: 'center',
-  },
-});
 
 export default SignInComponent;
