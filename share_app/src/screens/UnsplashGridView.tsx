@@ -45,12 +45,12 @@ const UnsplashGridView: React.FC = () => {
   const showToast = () => {
     Toast.show({
       type: 'success',
-      position: 'bottom',
+      position: 'top',
       text1: 'Success',
       text2: 'Successfully saved images',
       visibilityTime: 4000,
       autoHide: true,
-      bottomOffset: 40,
+      topOffset: 60,
     });
   };
 
@@ -76,22 +76,25 @@ const UnsplashGridView: React.FC = () => {
     <UserProvider>
       <ScrollView style={styles.container}>
         <>
-          {photos.map(imageUrl => {
-            <TouchableOpacity
-              style={[
-                styles.imageWrapper,
-                selectedImages.includes(imageUrl) && styles.imageSelected,
-              ]}
-              onPress={() => toggleImageSelection(imageUrl)}>
-              <Image source={{uri: imageUrl}} style={styles.image} />
-            </TouchableOpacity>;
-          })}
+          <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+            {photos.map(imageUrl => (
+              <TouchableOpacity
+                key={imageUrl}
+                style={[
+                  styles.imageWrapper,
+                  selectedImages.includes(imageUrl) && styles.imageSelected,
+                ]}
+                onPress={() => toggleImageSelection(imageUrl)}>
+                <Image source={{uri: imageUrl}} style={styles.image} />
+              </TouchableOpacity>
+            ))}
+          </View>
           <TouchableOpacity
             style={[
-              styles.iosButton,
+              styles.primaryButton,
               isButtonDisabled && styles.iosButtonDisabled,
             ]}
-            onPress={() => async () => {
+            onPress={async () => {
               if (!isButtonDisabled) {
                 const userId = auth.currentUser?.uid;
                 if (userId) {
@@ -111,7 +114,7 @@ const UnsplashGridView: React.FC = () => {
             disabled={isButtonDisabled}>
             <Text
               style={[
-                styles.iosButtonText,
+                styles.primaryButtonText,
                 isButtonDisabled && styles.iosButtonTextDisabled,
               ]}>
               Save Selected
@@ -119,10 +122,8 @@ const UnsplashGridView: React.FC = () => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleSignOut}
-            style={styles.signOutButton}>
-            <View style={styles.signOutContent}>
-              <Text style={styles.signOutText}>Sign Out</Text>
-            </View>
+            style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>Sign Out</Text>
           </TouchableOpacity>
         </>
       </ScrollView>
@@ -143,16 +144,39 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   imageWrapper: {
-    margin: 5,
+    width: '33.33%',
+    padding: 5,
   },
   imageSelected: {
     borderWidth: 1,
     borderColor: 'blue',
     borderRadius: 12,
   },
-  iosButton: {
+  iosButtonDisabled: {
+    borderColor: '#C3C3C3',
+  },
+  iosButtonTextDisabled: {
+    color: '#C3C3C3',
+  },
+  primaryButton: {
     marginHorizontal: 30,
-    marginVertical: 20,
+    marginVertical: 10,
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primaryButtonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  secondaryButton: {
+    marginHorizontal: 30,
+    marginVertical: 10,
     backgroundColor: 'transparent',
     borderColor: '#007AFF',
     borderWidth: 1,
@@ -161,36 +185,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
   },
-  iosButtonText: {
+  secondaryButtonText: {
     color: '#007AFF',
     fontSize: 16,
-  },
-  iosButtonDisabled: {
-    borderColor: '#C3C3C3',
-  },
-  iosButtonTextDisabled: {
-    color: '#C3C3C3',
-  },
-  signOutButton: {
-    padding: 15,
-    borderRadius: 50, // This will create a fully rounded button for square-shaped buttons, adjust if needed
-    backgroundColor: 'white',
-    // Add any other styling or shadow you want for the button here
-  },
-  signOutContent: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    // Add space between elements if there's more than the Text element
-  },
-  signOutText: {
-    textAlign: 'center',
-    color: 'gray',
-    fontSize: 18,
-    fontWeight: 'bold',
-    // Add any other text styles you want here
   },
 });
 
