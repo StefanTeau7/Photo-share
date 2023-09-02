@@ -9,13 +9,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {auth} from '../../firebaseConfig';
-import ApiService from '../services/api_service';
 import Toast from 'react-native-toast-message';
+import {auth} from '../../firebaseConfig';
+import {UserProvider, useUser} from '../providers/UserContext';
+import ApiService from '../services/API_Service';
 
-// interface UnsplashGridViewProps {
-//   onSignOut: () => void;
-// }
 export interface Photo {
   id: string;
   urls: {small: string};
@@ -25,11 +23,12 @@ const UnsplashGridView: React.FC = () => {
   const [photos, setPhotos] = useState<string[]>([]);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const isButtonDisabled = selectedImages.length === 0;
+  const {setUserInfo} = useUser();
 
-  const signOut = async () => {
+  const handleSignOut = async () => {
     try {
       await GoogleSignin.signOut();
-      // onSignOut();
+      setUserInfo(null); // reset user info when signing out
     } catch (error) {
       console.error(error);
     }
@@ -74,56 +73,60 @@ const UnsplashGridView: React.FC = () => {
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
-      <>
-        {photos.map(imageUrl => {
+    <UserProvider>
+      <ScrollView style={styles.container}>
+        <>
+          {photos.map(imageUrl => {
+            <TouchableOpacity
+              style={[
+                styles.imageWrapper,
+                selectedImages.includes(imageUrl) && styles.imageSelected,
+              ]}
+              onPress={() => toggleImageSelection(imageUrl)}>
+              <Image source={{uri: imageUrl}} style={styles.image} />
+            </TouchableOpacity>;
+          })}
           <TouchableOpacity
             style={[
-              styles.imageWrapper,
-              selectedImages.includes(imageUrl) && styles.imageSelected,
+              styles.iosButton,
+              isButtonDisabled && styles.iosButtonDisabled,
             ]}
-            onPress={() => toggleImageSelection(imageUrl)}>
-            <Image source={{uri: imageUrl}} style={styles.image} />
-          </TouchableOpacity>;
-        })}
-        <TouchableOpacity
-          style={[
-            styles.iosButton,
-            isButtonDisabled && styles.iosButtonDisabled,
-          ]}
-          onPress={() => async () => {
-            if (!isButtonDisabled) {
-              const userId = auth.currentUser?.uid;
-              if (userId) {
-                const result = await ApiService.saveFavoriteImages(
-                  userId,
-                  selectedImages,
-                );
-                if (result) {
-                  console.log('Successfully saved images');
-                  showToast();
+            onPress={() => async () => {
+              if (!isButtonDisabled) {
+                const userId = auth.currentUser?.uid;
+                if (userId) {
+                  const result = await ApiService.saveFavoriteImages(
+                    userId,
+                    selectedImages,
+                  );
+                  if (result) {
+                    console.log('Successfully saved images');
+                    showToast();
+                  }
+                } else {
+                  console.error('No user is authenticated');
                 }
-              } else {
-                console.error('No user is authenticated');
               }
-            }
-          }}
-          disabled={isButtonDisabled}>
-          <Text
-            style={[
-              styles.iosButtonText,
-              isButtonDisabled && styles.iosButtonTextDisabled,
-            ]}>
-            Save Selected
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={signOut} style={styles.signOutButton}>
-          <View style={styles.signOutContent}>
-            <Text style={styles.signOutText}>Sign Out</Text>
-          </View>
-        </TouchableOpacity>
-      </>
-    </ScrollView>
+            }}
+            disabled={isButtonDisabled}>
+            <Text
+              style={[
+                styles.iosButtonText,
+                isButtonDisabled && styles.iosButtonTextDisabled,
+              ]}>
+              Save Selected
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleSignOut}
+            style={styles.signOutButton}>
+            <View style={styles.signOutContent}>
+              <Text style={styles.signOutText}>Sign Out</Text>
+            </View>
+          </TouchableOpacity>
+        </>
+      </ScrollView>
+    </UserProvider>
   );
 };
 

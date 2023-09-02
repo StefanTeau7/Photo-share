@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import {auth} from '../../firebaseConfig';
-import ApiService from '../services/api_service';
+import ApiService from '../services/API_Service';
 
 export interface ImageModel {
   imageUrl: string;
