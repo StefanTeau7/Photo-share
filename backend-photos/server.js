@@ -58,4 +58,57 @@ app.post('/users/:userId/favorites', async (req, res) => {
     }
 });
 
+app.post('/users/:userId/collections', async (req, res) => {
+    const { userId } = req.params;
+    const { collectionName, images } = req.body;
+
+    let user = await User.findOne({ userId: userId });
+
+    if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    const newCollection = {
+        name: collectionName,
+        images
+    };
+
+    user.collections.push(newCollection);
+
+    await user.save();
+    res.json({ success: true, message: 'Collection added successfully.' });
+});
+
+app.get('/users/:userId/collections', async (req, res) => {
+    const { userId } = req.params;
+
+    const user = await User.findOne({ userId: userId });
+
+    if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    res.json({ success: true, collections: user.collections });
+});
+
+app.put('/users/:userId/collections/:collectionName', async (req, res) => {
+    const { userId, collectionName } = req.params;
+    const { images } = req.body;
+
+    let user = await User.findOne({ userId: userId });
+
+    if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    let collection = user.collections.find(col => col.name === collectionName);
+    if (!collection) {
+        return res.status(404).json({ success: false, message: 'Collection not found.' });
+    }
+
+    collection.images.push(...images); // This adds new images to the collection
+
+    await user.save();
+    res.json({ success: true, message: 'Images added to collection successfully.' });
+});
 

@@ -6,6 +6,7 @@ import SignInComponent from './src/components/SignInComponent';
 import TabsComponent from './src/components/TabsComponent';
 import {UserProvider, useUser} from './src/providers/UserContext';
 import {useAuth} from './src/services/useAuth';
+import ImagesCollection from './src/screens/ImageCollections';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,11 +17,18 @@ export function InnerApp() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName={userInfo ? 'Tabs' : 'SignIn'}>
         {userInfo ? (
-          <Stack.Screen
-            name="Tabs"
-            component={TabsComponent}
-            options={{headerShown: false}}
-          />
+          <>
+            <Stack.Screen
+              name="Tabs"
+              component={TabsComponent}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="ImagesCollections"
+              component={ImagesCollection}
+              options={{title: 'Images Collection'}}
+            />
+          </>
         ) : (
           <Stack.Screen name="SignIn" options={{title: 'Sign In'}}>
             {() => <SignInComponent signIn={signIn} />}

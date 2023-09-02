@@ -14,6 +14,7 @@ interface SaveImageResponse {
 }
 
 class ApiService {
+  static cachedCollections: {[collectionName: string]: string[]} = {};
   // Fetch a user's favorite images by userId
   static async fetchFavoriteImages(userId: string): Promise<Image[] | null> {
     try {
@@ -41,6 +42,100 @@ class ApiService {
     } catch (error) {
       console.error('Error saving favorite images:', error);
       return null;
+    }
+  }
+
+  static async saveCollection(
+    collectionName: string,
+    images: string[],
+    userId?: string,
+  ) {
+    if (userId === undefined) {
+      throw new Error('userId is undefined');
+    }
+    try {
+      const response = await fetch(`${BASE_URL}/users/${userId}/collections`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          collectionName: collectionName,
+          images: images,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Error saving collection.');
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error in saveCollection:', error);
+      throw error;
+    }
+  }
+
+  static async fetchCollections(userId: string) {
+    if (Object.keys(ApiService.cachedCollections).length) {
+      return ApiService.cachedCollections; // If cached, return immediately
+    }
+    try {
+      const response = await fetch(`${BASE_URL}/users/${userId}/collections`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Error fetching collections.');
+      }
+
+      data.collections.forEach((collection: any) => {
+        ApiService.cachedCollections[collection.name] = collection.images;
+      });
+
+      return ApiService.cachedCollections;
+    } catch (error) {
+      console.error('Error in fetchCollections:', error);
+      throw error;
+    }
+  }
+
+  static getCachedCollectionImages(collectionName: string): string[] {
+    return ApiService.cachedCollections[collectionName] || [];
+  }
+
+  static async addImagesToCollection(
+    collectionName: string,
+    images: string[],
+    userId?: string,
+  ) {
+    const endpoint = `${BASE_URL}/users/${userId}/collections/${collectionName}`;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          images: images,
+        }),
+      });
+
+      if (!response.ok) {
+        const textResponse = await response.text();
+        console.error('Unexpected response:', textResponse);
+        throw new Error(
+          'Error adding images to collection. Unexpected server response.',
+        );
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error in addImagesToCollection:', error);
+      throw error;
     }
   }
 }
