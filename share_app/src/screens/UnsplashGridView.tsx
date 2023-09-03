@@ -105,6 +105,7 @@ const UnsplashGridView: React.FC = () => {
                   );
                   if (result) {
                     console.log('Successfully saved images');
+                    setSelectedImages([]);
                     showToast();
                   }
                 } else {

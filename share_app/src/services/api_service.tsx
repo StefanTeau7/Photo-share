@@ -70,6 +70,7 @@ class ApiService {
       if (!response.ok) {
         throw new Error(data.message || 'Error saving collection.');
       }
+      ApiService.cachedCollections[collectionName] = images;
 
       return data;
     } catch (error) {
@@ -129,6 +130,15 @@ class ApiService {
         throw new Error(
           'Error adding images to collection. Unexpected server response.',
         );
+      }
+      // Update cachedCollections after adding images to existing collection
+      if (ApiService.cachedCollections[collectionName]) {
+        ApiService.cachedCollections[collectionName] = [
+          ...ApiService.cachedCollections[collectionName],
+          ...images,
+        ];
+      } else {
+        ApiService.cachedCollections[collectionName] = images;
       }
 
       const data = await response.json();

@@ -34,6 +34,7 @@ const FavoriteImagesScreen: React.FC<{navigation: any}> = ({navigation}) => {
         userId,
       );
       setSelectedImages([]);
+      setAddToCollectionVisible(false);
     } catch (error) {
       console.error('Error while adding to collection:', error);
     }
@@ -44,6 +45,7 @@ const FavoriteImagesScreen: React.FC<{navigation: any}> = ({navigation}) => {
       await ApiService.saveCollection(collectionName, selectedImages, userId);
       setCollections(prevCollections => [...prevCollections, collectionName]);
       setSelectedImages([]);
+      setCreateCollectionVisible(false);
     } catch (error) {
       console.error('Error while creating collection:', error);
     }
