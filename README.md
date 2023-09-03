@@ -1,4 +1,4 @@
-# BASE 10 SWE Exercise
+# Heretic Assignment
 
 The objective of this product is to create an iOS app using React Native which serves the functionality of a photo collection and sharing platform.
 
