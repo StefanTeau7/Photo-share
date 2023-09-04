@@ -33,7 +33,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({
                   style={[
                     styles.image,
                     selectedImages.includes(item.imageId) &&
-                      styles.selectedImage,
+                      styles.imageSelected,
                   ]}
                 />
               </TouchableOpacity>

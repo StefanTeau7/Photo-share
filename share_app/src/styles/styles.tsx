@@ -144,9 +144,6 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 10,
   },
-  selectedImage: {
-    opacity: 0.5,
-  },
   imageRow: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
@@ -170,5 +167,18 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'blue',
     textAlign: 'center',
+  },
+  input: {
+    width: '80%',
+    marginTop: 20,
+    height: 40,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderColor: '#007AFF',
+    borderWidth: 1,
+    borderRadius: 5,
+    backgroundColor: 'white',
+    fontSize: 16,
+    marginBottom: 15,
   },
 });

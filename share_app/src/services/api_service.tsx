@@ -1,7 +1,5 @@
 import axios, {AxiosResponse} from 'axios';
 
-const BASE_URL = 'http://localhost:3000';
-
 interface Image {
   imageUrl: string;
   imageId: string;
@@ -14,12 +12,17 @@ interface SaveImageResponse {
 }
 
 class ApiService {
+  static BASE_URL = 'http://localhost:3000';
+
+  static setBaseURL(url: string) {
+    this.BASE_URL = url;
+  }
   static cachedCollections: {[collectionName: string]: string[]} = {};
   // Fetch a user's favorite images by userId
   static async fetchFavoriteImages(userId: string): Promise<Image[] | null> {
     try {
       const response: AxiosResponse<{favorites: Image[]}> = await axios.get(
-        `${BASE_URL}/users/${userId}/favorites`,
+        `${ApiService.BASE_URL}/users/${userId}/favorites`,
       );
       return response.data.favorites;
     } catch (error) {
@@ -35,7 +38,7 @@ class ApiService {
   ): Promise<SaveImageResponse | null> {
     try {
       const response: AxiosResponse<SaveImageResponse> = await axios.post(
-        `${BASE_URL}/users/${userId}/favorites`,
+        `${ApiService.BASE_URL}/users/${userId}/favorites`,
         {images: imageUrls},
       );
       return response.data;
@@ -54,16 +57,19 @@ class ApiService {
       throw new Error('userId is undefined');
     }
     try {
-      const response = await fetch(`${BASE_URL}/users/${userId}/collections`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${ApiService.BASE_URL}/users/${userId}/collections`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            collectionName: collectionName,
+            images: images,
+          }),
         },
-        body: JSON.stringify({
-          collectionName: collectionName,
-          images: images,
-        }),
-      });
+      );
 
       const data = await response.json();
 
@@ -84,7 +90,9 @@ class ApiService {
       return ApiService.cachedCollections; // If cached, return immediately
     }
     try {
-      const response = await fetch(`${BASE_URL}/users/${userId}/collections`);
+      const response = await fetch(
+        `${ApiService.BASE_URL}/users/${userId}/collections`,
+      );
       const data = await response.json();
 
       if (!response.ok) {
@@ -111,7 +119,7 @@ class ApiService {
     images: string[],
     userId?: string,
   ) {
-    const endpoint = `${BASE_URL}/users/${userId}/collections/${collectionName}`;
+    const endpoint = `${ApiService.BASE_URL}/users/${userId}/collections/${collectionName}`;
 
     try {
       const response = await fetch(endpoint, {

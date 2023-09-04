@@ -2,6 +2,7 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {GoogleAuthProvider, signInWithCredential} from 'firebase/auth';
 import {auth} from '../../firebaseConfig';
 import {useUser} from '../providers/UserContext';
+import ApiService from './API_Service';
 
 GoogleSignin.configure({
   webClientId:
@@ -26,5 +27,15 @@ export const useAuth = () => {
     }
   };
 
-  return {signIn};
+  const signOut = async () => {
+    try {
+      await GoogleSignin.signOut();
+      setUserInfo(null);
+      ApiService.cachedCollections = {};
+    } catch (error) {
+      console.error('Sign-Out Error:', error);
+    }
+  };
+
+  return {signIn, signOut};
 };

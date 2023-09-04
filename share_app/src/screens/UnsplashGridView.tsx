@@ -1,19 +1,13 @@
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ScrollView, Text, TouchableOpacity} from 'react-native';
 import Toast from 'react-native-toast-message';
 import {auth} from '../../firebaseConfig';
-import {UserProvider, useUser} from '../providers/UserContext';
+import {UserProvider} from '../providers/UserContext';
 import ApiService from '../services/API_Service';
 import {styles} from '../styles/styles';
+import {useAuth} from '../services/useAuth';
+import ImageGrid, {ImageModel} from '../components/ImageGrid';
 
 export interface Photo {
   id: string;
@@ -24,16 +18,11 @@ const UnsplashGridView: React.FC = () => {
   const [photos, setPhotos] = useState<string[]>([]);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const isButtonDisabled = selectedImages.length === 0;
-  const {setUserInfo} = useUser();
-
-  const handleSignOut = async () => {
-    try {
-      await GoogleSignin.signOut();
-      setUserInfo(null); // reset user info when signing out
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const {signOut} = useAuth();
+  const transformedPhotos: ImageModel[] = photos.map(photo => ({
+    imageId: photo,
+    imageUrl: photo,
+  }));
 
   const toggleImageSelection = (selectedPhoto: string) => {
     if (selectedImages.some(photo => photo === selectedPhoto)) {
@@ -77,19 +66,11 @@ const UnsplashGridView: React.FC = () => {
     <UserProvider>
       <ScrollView style={styles.container}>
         <>
-          <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-            {photos.map(imageUrl => (
-              <TouchableOpacity
-                key={imageUrl}
-                style={[
-                  styles.imageWrapper,
-                  selectedImages.includes(imageUrl) && styles.imageSelected,
-                ]}
-                onPress={() => toggleImageSelection(imageUrl)}>
-                <Image source={{uri: imageUrl}} style={styles.image} />
-              </TouchableOpacity>
-            ))}
-          </View>
+          <ImageGrid
+            images={transformedPhotos}
+            selectedImages={selectedImages}
+            toggleImageSelection={toggleImageSelection}
+          />
           <TouchableOpacity
             style={[
               styles.primaryButton,
@@ -122,9 +103,7 @@ const UnsplashGridView: React.FC = () => {
               Save Selected
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleSignOut}
-            style={styles.secondaryButton}>
+          <TouchableOpacity onPress={signOut} style={styles.secondaryButton}>
             <Text style={styles.secondaryButtonText}>Sign Out</Text>
           </TouchableOpacity>
         </>
