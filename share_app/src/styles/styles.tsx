@@ -180,5 +180,6 @@ export const styles = StyleSheet.create({
     backgroundColor: 'white',
     fontSize: 16,
     marginBottom: 15,
+    color: 'black',
   },
 });

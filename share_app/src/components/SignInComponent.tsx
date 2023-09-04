@@ -6,7 +6,7 @@ import ApiService from '../services/API_Service';
 import Clipboard from '@react-native-community/clipboard';
 
 const SignInComponent = ({signIn}: {signIn: () => void}) => {
-  const fadeAnim = useRef(new Animated.Value(0.5)).current; // Initial value for opacity: 0.5
+  const fadeAnim = useRef(new Animated.Value(0.5)).current;
   const [serverURL, setServerURL] = useState('');
 
   const handleSignIn = () => {
@@ -14,13 +14,13 @@ const SignInComponent = ({signIn}: {signIn: () => void}) => {
       Alert.alert('Error', 'Server URL is mandatory!');
       return;
     }
-    ApiService.setBaseURL(serverURL); // Update the BASE_URL in ApiService
+    ApiService.setBaseURL(serverURL);
     signIn();
   };
 
   const handlePaste = async () => {
     const text = await Clipboard.getString();
-    setServerURL(text); // Assuming you are using a state variable named serverURL
+    setServerURL(text);
   };
 
   Animated.loop(
@@ -49,7 +49,8 @@ const SignInComponent = ({signIn}: {signIn: () => void}) => {
         onPress={handleSignIn}
       />
       <TextInput
-        style={styles.input} // you should style this input field
+        style={styles.input}
+        placeholderTextColor={'#565656'}
         placeholder="Enter Server URL"
         autoCapitalize="none"
         autoCorrect={false}
