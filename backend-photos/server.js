@@ -52,7 +52,7 @@ app.post('/users/:userId/favorites', async (req, res) => {
         user.favorites.push(...images);
 
         await user.save();
-        res.json({ success: true, message: 'Favorite saved successfully.' });
+        res.json({ success: true, message: 'Favorite saved successfully.', favorites: user.favorites });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

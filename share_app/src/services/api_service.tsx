@@ -1,30 +1,33 @@
 import axios, {AxiosResponse} from 'axios';
-
-interface Image {
-  imageUrl: string;
-  imageId: string;
-}
+import {ImageModel} from '../components/ImageGrid';
 
 interface SaveImageResponse {
   success: boolean;
-  image?: Image;
+  image?: ImageModel;
   message?: string;
 }
 
 class ApiService {
-  static BASE_URL = 'http://localhost:3000';
+  static BASE_URL =
+    'https://b500-2601-646-4000-5a10-1423-c044-a9e-55d6.ngrok-free.app';
 
-  static setBaseURL(url: string) {
-    this.BASE_URL = url;
-  }
+  static favoriteImageCache: Record<string, ImageModel[]> = {};
   static cachedCollections: {[collectionName: string]: string[]} = {};
+
   // Fetch a user's favorite images by userId
-  static async fetchFavoriteImages(userId: string): Promise<Image[] | null> {
+  static async fetchFavoriteImages(
+    userId: string,
+  ): Promise<ImageModel[] | null> {
+    if (this.favoriteImageCache[userId]) {
+      return this.favoriteImageCache[userId];
+    }
     try {
-      const response: AxiosResponse<{favorites: Image[]}> = await axios.get(
-        `${ApiService.BASE_URL}/users/${userId}/favorites`,
-      );
-      return response.data.favorites;
+      const response: AxiosResponse<{favorites: ImageModel[]}> =
+        await axios.get(`${ApiService.BASE_URL}/users/${userId}/favorites`);
+
+      this.favoriteImageCache[userId] = response.data.favorites;
+
+      return this.favoriteImageCache[userId];
     } catch (error) {
       console.error('Error fetching favorite images:', error);
       return null;
@@ -35,13 +38,16 @@ class ApiService {
   static async saveFavoriteImages(
     userId: string,
     imageUrls: string[],
-  ): Promise<SaveImageResponse | null> {
+  ): Promise<ImageModel[] | null> {
     try {
-      const response: AxiosResponse<SaveImageResponse> = await axios.post(
-        `${ApiService.BASE_URL}/users/${userId}/favorites`,
-        {images: imageUrls},
-      );
-      return response.data;
+      const response: AxiosResponse<{favorites: ImageModel[]}> =
+        await axios.post(`${ApiService.BASE_URL}/users/${userId}/favorites`, {
+          images: imageUrls,
+        });
+
+      this.favoriteImageCache[userId] = response.data.favorites;
+
+      return this.favoriteImageCache[userId];
     } catch (error) {
       console.error('Error saving favorite images:', error);
       return null;

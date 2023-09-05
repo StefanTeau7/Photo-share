@@ -1,22 +1,12 @@
 import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
 import React, {useRef, useState} from 'react';
-import {Alert, Animated, Button, TextInput, View} from 'react-native';
+import {Animated, Button, TextInput, View} from 'react-native';
 import {styles} from '../styles/styles';
-import ApiService from '../services/API_Service';
 import Clipboard from '@react-native-community/clipboard';
 
 const SignInComponent = ({signIn}: {signIn: () => void}) => {
   const fadeAnim = useRef(new Animated.Value(0.5)).current;
   const [serverURL, setServerURL] = useState('');
-
-  const handleSignIn = () => {
-    if (!serverURL) {
-      Alert.alert('Error', 'Server URL is mandatory!');
-      return;
-    }
-    ApiService.setBaseURL(serverURL);
-    signIn();
-  };
 
   const handlePaste = async () => {
     const text = await Clipboard.getString();
@@ -46,7 +36,7 @@ const SignInComponent = ({signIn}: {signIn: () => void}) => {
       <GoogleSigninButton
         size={GoogleSigninButton.Size.Wide}
         color={GoogleSigninButton.Color.Dark}
-        onPress={handleSignIn}
+        onPress={signIn}
       />
       <TextInput
         style={styles.input}

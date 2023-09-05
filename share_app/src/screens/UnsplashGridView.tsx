@@ -3,11 +3,11 @@ import React, {useEffect, useState} from 'react';
 import {ScrollView, Text, TouchableOpacity} from 'react-native';
 import Toast from 'react-native-toast-message';
 import {auth} from '../../firebaseConfig';
+import ImageGrid, {ImageModel} from '../components/ImageGrid';
 import {UserProvider} from '../providers/UserContext';
 import ApiService from '../services/API_Service';
-import {styles} from '../styles/styles';
 import {useAuth} from '../services/useAuth';
-import ImageGrid, {ImageModel} from '../components/ImageGrid';
+import {styles} from '../styles/styles';
 
 export interface Photo {
   id: string;
@@ -15,13 +15,13 @@ export interface Photo {
 }
 
 const UnsplashGridView: React.FC = () => {
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<Photo[]>([]);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const isButtonDisabled = selectedImages.length === 0;
   const {signOut} = useAuth();
   const transformedPhotos: ImageModel[] = photos.map(photo => ({
-    imageId: photo,
-    imageUrl: photo,
+    imageId: photo.id,
+    imageUrl: photo.urls.small,
   }));
 
   const toggleImageSelection = (selectedPhoto: string) => {
@@ -56,8 +56,7 @@ const UnsplashGridView: React.FC = () => {
           },
         },
       );
-      const photoUrls = response.data.map(photo => photo.urls.small);
-      setPhotos(photoUrls);
+      setPhotos(response.data);
     };
     fetchPhotos();
   }, []);
@@ -80,9 +79,15 @@ const UnsplashGridView: React.FC = () => {
               if (!isButtonDisabled) {
                 const userId = auth.currentUser?.uid;
                 if (userId) {
+                  const selectedImageUrls = selectedImages
+                    .map(id => {
+                      const photo = photos.find(p => p.id === id);
+                      return photo?.urls.small;
+                    })
+                    .filter((url): url is string => !!url);
                   const result = await ApiService.saveFavoriteImages(
                     userId,
-                    selectedImages,
+                    selectedImageUrls,
                   );
                   if (result) {
                     console.log('Successfully saved images');

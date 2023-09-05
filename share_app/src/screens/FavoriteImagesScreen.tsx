@@ -7,6 +7,8 @@ import {auth} from '../../firebaseConfig';
 import ApiService from '../services/API_Service';
 import CollectionItem from '../components/CollectionItem';
 import {styles} from '../styles/styles';
+import {ActivityIndicator} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 
 const FavoriteImagesScreen: React.FC<{navigation: any}> = ({navigation}) => {
   const [images, setImages] = useState<ImageModel[]>([]);
@@ -68,7 +70,7 @@ const FavoriteImagesScreen: React.FC<{navigation: any}> = ({navigation}) => {
         const uniqueImageUrls = [...new Set(favorites)];
         const imagesData: ImageModel[] = uniqueImageUrls.map((url: any) => ({
           imageUrl: url,
-          imageId: url,
+          imageId: Math.random().toString().slice(2, 10),
         }));
         setImages(imagesData);
       }
@@ -82,8 +84,22 @@ const FavoriteImagesScreen: React.FC<{navigation: any}> = ({navigation}) => {
     fetchCollections();
   }, [fetchImages, fetchCollections]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchImages();
+      fetchCollections();
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      return () => {};
+    }, [fetchImages, fetchCollections]),
+  );
+
   if (!images.length) {
-    return <Text>Loading...</Text>;
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
   }
 
   return (

@@ -182,4 +182,16 @@ export const styles = StyleSheet.create({
     marginBottom: 15,
     color: 'black',
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#007AFF',
+  },
 });

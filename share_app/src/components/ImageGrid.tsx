@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, View, TouchableOpacity, StyleSheet} from 'react-native';
+import {Image, View, TouchableOpacity} from 'react-native';
 import {styles} from '../styles/styles';
 
 export interface ImageModel {
@@ -35,6 +35,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({
                     selectedImages.includes(item.imageId) &&
                       styles.imageSelected,
                   ]}
+                  onError={error => console.log('Image Error:', error)}
                 />
               </TouchableOpacity>
             ))}
