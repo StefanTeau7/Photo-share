@@ -8,6 +8,7 @@ import ApiService from '../services/API_Service';
 import CollectionItem from '../components/CollectionItem';
 import {styles} from '../styles/styles';
 import {ActivityIndicator} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 
 const FavoriteImagesScreen: React.FC<{navigation: any}> = ({navigation}) => {
   const [images, setImages] = useState<ImageModel[]>([]);
@@ -82,6 +83,23 @@ const FavoriteImagesScreen: React.FC<{navigation: any}> = ({navigation}) => {
     fetchImages();
     fetchCollections();
   }, [fetchImages, fetchCollections]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchImages();
+      fetchCollections();
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      return () => {};
+    }, [fetchImages, fetchCollections]),
+  );
+
+  if (images.length === 0) {
+    return (
+      <View style={styles.containerCenter}>
+        <Text style={styles.collectionsTitle}>No images</Text>
+      </View>
+    );
+  }
 
   if (!images.length) {
     return (
