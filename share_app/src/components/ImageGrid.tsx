@@ -10,7 +10,7 @@ export interface ImageModel {
 interface ImageGridProps {
   images: ImageModel[];
   selectedImages: string[];
-  toggleImageSelection: (imageId: string) => void;
+  toggleImageSelection: (imageId: string, imageUrl: string) => void;
 }
 
 const ImageGrid: React.FC<ImageGridProps> = ({
@@ -27,7 +27,9 @@ const ImageGrid: React.FC<ImageGridProps> = ({
             {items.map(item => (
               <TouchableOpacity
                 key={item.imageId}
-                onPress={() => toggleImageSelection(item.imageId)}>
+                onPress={() =>
+                  toggleImageSelection(item.imageId, item.imageUrl)
+                }>
                 <Image
                   source={{uri: item.imageUrl}}
                   style={[

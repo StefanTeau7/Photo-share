@@ -1,6 +1,6 @@
 import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
 import React, {useRef} from 'react';
-import {Animated, Button, View} from 'react-native';
+import {Animated, View} from 'react-native';
 import {styles} from '../styles/styles';
 
 const SignInComponent = ({signIn}: {signIn: () => void}) => {

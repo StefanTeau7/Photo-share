@@ -8,7 +8,6 @@ import ApiService from '../services/API_Service';
 import CollectionItem from '../components/CollectionItem';
 import {styles} from '../styles/styles';
 import {ActivityIndicator} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
 
 const FavoriteImagesScreen: React.FC<{navigation: any}> = ({navigation}) => {
   const [images, setImages] = useState<ImageModel[]>([]);
@@ -18,12 +17,12 @@ const FavoriteImagesScreen: React.FC<{navigation: any}> = ({navigation}) => {
   const [createCollectionVisible, setCreateCollectionVisible] = useState(false);
   const userId = auth.currentUser?.uid;
 
-  const toggleImageSelection = (imageId: string) => {
+  const toggleImageSelection = (imageId: string, imageUrl: string) => {
     setSelectedImages(prevSelected => {
-      if (prevSelected.includes(imageId)) {
-        return prevSelected.filter(id => id !== imageId);
+      if (prevSelected.includes(imageUrl)) {
+        return prevSelected.filter(url => url !== imageUrl);
       } else {
-        return [...prevSelected, imageId];
+        return [...prevSelected, imageUrl];
       }
     });
   };
@@ -84,15 +83,6 @@ const FavoriteImagesScreen: React.FC<{navigation: any}> = ({navigation}) => {
     fetchCollections();
   }, [fetchImages, fetchCollections]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchImages();
-      fetchCollections();
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      return () => {};
-    }, [fetchImages, fetchCollections]),
-  );
-
   if (!images.length) {
     return (
       <View style={styles.loadingContainer}>
@@ -127,7 +117,9 @@ const FavoriteImagesScreen: React.FC<{navigation: any}> = ({navigation}) => {
         <ImageGrid
           images={images}
           selectedImages={selectedImages}
-          toggleImageSelection={toggleImageSelection}
+          toggleImageSelection={(imageId: string, imageUrl: string) =>
+            toggleImageSelection(imageId, imageUrl)
+          }
         />
       </ScrollView>
       {selectedImages.length > 0 && (
